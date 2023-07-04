@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Speech to Text AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #fff;
+      color: #000;
+    }
+    
+    #content {
+      margin-top: 100px;
+    }
+    
+    h1 {
+      font-size: 24px;
+      color: #075e54;
+      letter-spacing: 2px;
+    }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      margin-top: 20px;
+    }
+    
+    .user-message {
+      background-color: #dcf8c6;
+      color: #000;
+      padding: 80px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      align-self: flex-end;
+      max-width: 70%;
+    }
+    
+    .ai-message {
+      background-color: #e5e5ea;
+      color: #000;
+      padding: 8px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      align-self: flex-start;
+      max-width: 100%;
+    }
+    
+    .message-container {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      margin-bottom: 10px;
+    }
+    
+    .message-text {
+      margin-left: 8px;
+      word-break: break-all;
+    }
+    
+    #instructions {
+      font-size: 14px;
+      margin-top: 20px;
+      color: #999;
+    }
+    
+    .graph-bar {
+      width: 0%;
+      height: 5px;
+      background-color: #075e54;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .button-container button {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+
+    #startButton {
+      background-color: #0f0;
+    }
+
+    #stopButton {
+      background-color: #f00;
+    }
+
+    #clearButton {
+      background-color: #075e54;
+    }
+
+    .typing-animation {
+      overflow: hidden;
+      white-space: nowrap;
+      color: #075e54;
+      border-right: 2px solid #075e54;
+      margin: 0 auto;
+      padding: 0 5px;
+      width: fit-content;
+      animation: typing 0.8s steps(40, end);
+    }
+
+    @keyframes typing {
+      from {
+        width: 0;
+      }
+      to {
+        width: fit-content;
+      }
+    }
+
+    .blinking-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 20px;
+      background-color: #075e54;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="content">
+    <h1>Speech to Text AI<span class="blinking-cursor"></span></h1>
+    <div id="chatContainer" class="chat-container"></div>
+    <div id="instructions">Mulai berbicara, program akan merekam dan menulis apa yang Anda ucapkan.</div>
+    <div class="graph-bar"></div>
+    <div class="button-container">
+      <button id="startButton">Mulai</button>
+      <button id="stopButton" disabled>Berhenti</button>
+      <button id="clearButton">Hapus Pesan</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const startButton = document.getElementById('startButton');
+      const stopButton = document.getElementById('stopButton');
+      const clearButton = document.getElementById('clearButton');
+      const chatContainer = document.getElementById('chatContainer');
+      const graphBar = document.querySelector('.graph-bar');
+      let tmp = "";
+      let isTyping = false;
+      let resetKeywords = ["ulang lagi bro", "hai kak"];
+
+      // Membuat objek recognition dan menentukan bahasa
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'id-ID';
+      recognition.continuous = true; // Mengaktifkan mode rekaman terus-menerus
+
+      recognition.onstart = () => {
+        // resultDiv.innerHTML = 'Mendengarkan...';
+      };
+
+      recognition.onresult = (event) => {
+        const speechResult = event.results[event.results.length - 1][0].transcript;
+        tmp += speechResult;
+
+        if (isTyping) {
+          chatContainer.lastChild.querySelector('.message-text').innerText = tmp;
+        } else {
+          const messageContainer = document.createElement('div');
+          messageContainer.className = 'message-container';
+          messageContainer.innerHTML = `
+            <div class="ai-message">
+              <div class="message-text">${tmp}</div>
+            </div>
+          `;
+          chatContainer.appendChild(messageContainer);
+          isTyping = true;
+        }
+
+        if (resetKeywords.some(keyword => speechResult.toLowerCase().includes(keyword.toLowerCase()))) {
+          tmp = "";
+          isTyping = false;
+          chatContainer.innerHTML = "";
+        }
+
+        if (speechResult.toLowerCase().includes("berhenti")) {
+          recognition.stop();
+          startButton.disabled = false;
+          stopButton.disabled = true;
+          tmp = "";
+          isTyping = false;
+          chatContainer.innerHTML = "";
+        }
+
+        const expression = speechResult.replace(/\s/g, ''); // Menghapus spasi dari ekspresi
+        const operatorRegex = /(\+|\-|\*|\/|\,)/;
+        const hasOperator = operatorRegex.test(expression);
+        const isNumeric = !isNaN(parseFloat(expression.replace(',', '.')));
+
+        if (hasOperator && isNumeric) {
+          const result = eval(expression); // Mengevaluasi ekspresi aritmatika
+          const messageContainer = document.createElement('div');
+          messageContainer.className = 'message-container';
+          messageContainer.innerHTML = `
+            <div class="ai-message">
+              <div class="message-text">Hasil: ${result}</div>
+            </div>
+          `;
+          chatContainer.appendChild(messageContainer);
+          isTyping = false;
+        }
+
+        // Mereset nilai tmp setelah mengirim teks ke server TTS
+        tmp = "";
+      };
+
+      recognition.onend = () => {
+        if (isTyping) {
+          const typingContainer = document.createElement('div');
+          typingContainer.className = 'message-container';
+          typingContainer.innerHTML = `
+            <div class="ai-message">
+              <div class="message-text">
+                <div class="typing-animation"></div>
+              </div>
+            </div>
+          `;
+          chatContainer.appendChild(typingContainer);
+          isTyping = false;
+        }
+      };
+
+      startButton.addEventListener('click', () => {
+        recognition.start();
+        startButton.disabled = true;
+        stopButton.disabled = false;
+      });
+
+      stopButton.addEventListener('click', () => {
+        recognition.stop();
+        startButton.disabled = false;
+        stopButton.disabled = true;
+        tmp = "";
+        isTyping = false;
+        chatContainer.innerHTML = "";
+      });
+
+      clearButton.addEventListener('click', () => {
+        chatContainer.innerHTML = "";
+      });
+    });
+  </script>
+</body>
+</html>
