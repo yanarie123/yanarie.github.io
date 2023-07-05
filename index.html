@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>FARMASI INDOPRIDE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      .container {
+        margin-top: 50px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .btn-margin {
+        margin-right: 10px;
+      }
+
+      #faktur,
+      #rekap {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      /* Menambahkan animasi pada alert */
+      /* Animasi fadeIn */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Animasi fadeOut */
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      .alert-fadeIn {
+        animation-name: fadeIn;
+        animation-duration: 10s;
+        animation-fill-mode: forwards;
+      }
+
+      .alert-fadeOut {
+        animation-name: fadeOut;
+        animation-duration: 30s;
+        animation-fill-mode: forwards;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Stok Obat</h1>
+
+      <h3>Stock Opname</h3>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Obat</th>
+              <th>Jumlah</th>
+            </tr>
+          </thead>
+          <tbody id="stockOpnameTable">
+            <tr>
+              <td>Betadine</td>
+              <td>
+                <input
+                  type="number"
+                  id="betadineInput"
+                  class="form-control"
+                  min="0"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Heparin</td>
+              <td>
+                <input
+                  type="number"
+                  id="heparinInput"
+                  class="form-control"
+                  min="0"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Antasida</td>
+              <td>
+                <input
+                  type="number"
+                  id="antasidaInput"
+                  class="form-control"
+                  min="0"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Paracetamol</td>
+              <td>
+                <input
+                  type="number"
+                  id="paracetamolInput"
+                  class="form-control"
+                  min="0"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Zat Besi</td>
+              <td>
+                <input
+                  type="number"
+                  id="zatBesiInput"
+                  class="form-control"
+                  min="0"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Sodium</td>
+              <td>
+                <input
+                  type="number"
+                  id="sodiumInput"
+                  class="form-control"
+                  min="0"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Amlodipin</td>
+              <td>
+                <input
+                  type="number"
+                  id="amlodipinInput"
+                  class="form-control"
+                  min="0"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Adrenalin</td>
+              <td>
+                <input
+                  type="number"
+                  id="adrenalinInput"
+                  class="form-control"
+                  min="0"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Painkiller</td>
+              <td>
+                <input
+                  type="number"
+                  id="painkillerInput"
+                  class="form-control"
+                  min="0"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <button onclick="opname()" class="btn btn-primary">Opname</button>
+
+      <hr />
+
+      <h3>Jual Beli Obat</h3>
+      <div id="jualBeliObat">
+        <button
+          onclick="beliObat('Betadine')"
+          class="btn btn-primary btn-margin"
+        >
+          Beli Betadine
+        </button>
+        <button
+          onclick="beliObat('Heparin')"
+          class="btn btn-primary btn-margin"
+        >
+          Beli Heparin
+        </button>
+        <button
+          onclick="beliObat('Antasida')"
+          class="btn btn-primary btn-margin"
+        >
+          Beli Antasida
+        </button>
+        <button
+          onclick="beliObat('Paracetamol')"
+          class="btn btn-primary btn-margin"
+        >
+          Beli Paracetamol
+        </button>
+        <button
+          onclick="beliObat('Zat Besi')"
+          class="btn btn-primary btn-margin"
+        >
+          Beli Zat Besi
+        </button>
+        <button onclick="beliObat('Sodium')" class="btn btn-primary btn-margin">
+          Beli Sodium
+        </button>
+        <button
+          onclick="beliObat('Amlodipin')"
+          class="btn btn-primary btn-margin"
+        >
+          Beli Amlodipin
+        </button>
+        <button
+          onclick="beliObat('Adrenalin')"
+          class="btn btn-primary btn-margin"
+        >
+          Beli Adrenalin
+        </button>
+        <button
+          onclick="beliObat('Painkiller')"
+          class="btn btn-primary btn-margin"
+        >
+          Beli Painkiller
+        </button>
+      </div>
+      <div id="totalPurchaseAmount">Total Harga: 0</div>
+
+      <hr />
+
+      <h3>Nota Beli Obat</h3>
+      <div>
+        <pre id="faktur"></pre>
+        <button onclick="copyFaktur()" class="btn btn-secondary">
+          Salin Nota
+        </button>
+        <button onclick="clearFaktur()" class="btn btn-secondary">
+          Clear Nota
+        </button>
+      </div>
+
+      <hr />
+
+      <h3>Rekap Obat</h3>
+      <div>
+        <pre id="rekap"></pre>
+        <button onclick="copyRekap()" class="btn btn-secondary">
+          Salin Rekap
+        </button>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      let stok = {
+        Betadine: 0,
+        Heparin: 0,
+        Antasida: 0,
+        Paracetamol: 0,
+        "Zat Besi": 0,
+        Sodium: 0,
+        Amlodipin: 0,
+        Adrenalin: 0,
+        Painkiller: 0,
+      };
+
+      let faktur = "";
+      let totalPurchaseAmount = 0;
+
+      let harga = {
+        Betadine: 8500,
+        Heparin: 8500,
+        Antasida: 8500,
+        Paracetamol: 12500,
+        "Zat Besi": 12500,
+        Sodium: 12500,
+        Amlodipin: 12500,
+        Adrenalin: 22500,
+        Painkiller: 15000,
+      };
+
+      function hideAlert(alertDiv) {
+        alertDiv.classList.add("alert-fadeOut"); // Menambahkan kelas CSS untuk animasi fadeOut
+        setTimeout(function () {
+          alertDiv.remove();
+        }, 8000); // Menghilangkan alert setelah 0,5 detik (500 milidetik)
+      }
+
+      function opname() {
+        let stockOpnameTable = document.getElementById("stockOpnameTable");
+        let rows = stockOpnameTable.getElementsByTagName("tr");
+
+        for (let i = 0; i < rows.length; i++) {
+          let obatCell = rows[i].getElementsByTagName("td")[0];
+          let inputCell = rows[i].getElementsByTagName("td")[1];
+          let obat = obatCell.textContent;
+          let jumlah = parseInt(
+            inputCell.getElementsByTagName("input")[0].value
+          );
+
+          if (!isNaN(jumlah) && jumlah >= 0) {
+            stok[obat] = jumlah;
+          }
+        }
+
+        updateStokTable();
+        //   resetInputValues();
+      }
+
+      function beliObat(obat) {
+        if (stok[obat] > 0) {
+          stok[obat]--;
+          faktur += "- 1 " + obat + " (" + stok[obat] + ")\n";
+          totalPurchaseAmount += harga[obat];
+
+          // Perbarui jumlah stok pada tabel
+          let stockOpnameTable = document.getElementById("stockOpnameTable");
+          let rows = stockOpnameTable.getElementsByTagName("tr");
+
+          for (let i = 0; i < rows.length; i++) {
+            let obatCell = rows[i].getElementsByTagName("td")[0];
+            let inputCell = rows[i].getElementsByTagName("td")[1];
+            let obatName = obatCell.textContent;
+
+            if (obatName === obat) {
+              let jumlahInput = inputCell.getElementsByTagName("input")[0];
+              jumlahInput.value = stok[obat];
+              break;
+            }
+          }
+        } else {
+          let alertDiv = document.createElement("div");
+          alertDiv.classList.add("alert", "alert-danger", "alert-fadeIn"); // Menambahkan kelas CSS untuk animasi fadeIn
+          alertDiv.textContent = "Stok obat " + obat + " habis";
+          document.getElementById("jualBeliObat").appendChild(alertDiv);
+
+          hideAlert(alertDiv);
+        }
+
+        document.getElementById("faktur").textContent =
+          "```\n" + faktur + "```";
+        document.getElementById("totalPurchaseAmount").textContent =
+          "Total Harga: " + totalPurchaseAmount;
+      }
+
+      function copyFaktur() {
+        let fakturText = "```\n" + faktur + "```";
+        navigator.clipboard
+          .writeText(fakturText)
+          .then(() => {
+            alert("Faktur obat berhasil disalin!");
+          })
+          .catch((error) => {
+            alert("Terjadi kesalahan saat menyalin faktur obat: " + error);
+          });
+      }
+
+      function clearFaktur() {
+        faktur = "";
+        totalPurchaseAmount = 0; // Reset totalPurchaseAmount ke 0
+        document.getElementById("faktur").textContent = "";
+        document.getElementById("totalPurchaseAmount").textContent =
+          "Total Harga: " + totalPurchaseAmount; // Perbarui tampilan total harga
+      }
+
+      function rekapObat() {
+        let rekap = "";
+        let trekap = "REKAP OBAT FARMASI - " + getCurrentDateTime();
+
+        // Menentukan panjang maksimum teks obat
+        let maxObatLength = 0;
+        for (let obat in stok) {
+          maxObatLength = Math.max(maxObatLength, obat.length);
+        }
+
+        // Membuat rekap dengan indent yang rapi
+        for (let obat in stok) {
+          let obatName = obat.padEnd(maxObatLength + 5);
+          rekap += obatName + ": " + stok[obat] + "\n";
+        }
+
+        document.getElementById("rekap").textContent =
+          "***" + trekap + "***\n" + "```\n" + rekap + "```";
+      }
+
+      function copyRekap() {
+        rekapObat();
+        let rekapText = document.getElementById("rekap").textContent;
+        navigator.clipboard
+          .writeText(rekapText)
+          .then(() => {
+            alert("Rekap obat berhasil disalin!");
+          })
+          .catch((error) => {
+            alert("Terjadi kesalahan saat menyalin rekap obat: " + error);
+          });
+      }
+
+      function updateStokTable() {
+        let stockOpnameTable = document.getElementById("stockOpnameTable");
+        let rows = stockOpnameTable.getElementsByTagName("tr");
+
+        for (let i = 0; i < rows.length; i++) {
+          let obatCell = rows[i].getElementsByTagName("td")[0];
+          let inputCell = rows[i].getElementsByTagName("td")[1];
+          let obat = obatCell.textContent;
+
+          if (stok[obat] >= 0) {
+            inputCell.getElementsByTagName("input")[0].value = stok[obat];
+          }
+        }
+        setInterval(rekapObat, 5000);
+      }
+
+      function resetInputValues() {
+        let stockOpnameTable = document.getElementById("stockOpnameTable");
+        let rows = stockOpnameTable.getElementsByTagName("tr");
+
+        for (let i = 0; i < rows.length; i++) {
+          let inputCell = rows[i].getElementsByTagName("td")[1];
+          inputCell.getElementsByTagName("input")[0].value = "";
+        }
+      }
+
+      function getCurrentDateTime() {
+        let now = new Date();
+        let date = now.getDate();
+        let month = now.getMonth() + 1;
+        let year = now.getFullYear();
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        let seconds = now.getSeconds();
+
+        let formattedDate =
+          padZero(hours) +
+          ":" +
+          padZero(minutes) +
+          " - " +
+          padZero(date) +
+          "/" +
+          padZero(month) +
+          "/" +
+          year;
+
+        return formattedDate;
+      }
+
+      function padZero(value) {
+        return value < 10 ? "0" + value : value;
+      }
+
+      $(document).ready(function () {
+        updateStokTable();
+      });
+    </script>
+  </body>
+</html>
