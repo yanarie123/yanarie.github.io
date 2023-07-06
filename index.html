@@ -346,6 +346,9 @@
           <button onclick="batalBeliObat()" class="btn btn-danger">
             Batal Beli Obat
           </button>
+          <button onclick="refreshHarga()" class="btn btn-warning">
+            Refresh Harga
+          </button>
         </div>
       </div>
       <hr />
@@ -353,7 +356,7 @@
         <h3 class="fw-bold display-7 mb-4">Rekap Obat</h3>
         <div class="textarea-container">
           <pre><code class="language-discord"></code></pre>
-          <textarea id="rekap"></textarea>
+          <textarea id="rekap" readonly></textarea>
           <button onclick="copyRekap()" class="btn btn-warning">
             Salin Rekap/Update Rekap
           </button>
@@ -366,6 +369,6 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/yanarie123/yanarie123.github.io/main.js"></script>
+    <script src="./main.js"></script>
   </body>
 </html>
