@@ -3,7 +3,7 @@ let bootstrapToast = null;
 if (storedStok) {
   stok = JSON.parse(storedStok);
 } else {
-  // Gunakan nilai stok yang ditentukan secara manual
+  // Gunakan nilai stok yang ditentukan secara manual edwin
   stok = {
     Betadine: 0,
     Heparin: 0,
