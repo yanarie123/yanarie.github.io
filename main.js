@@ -250,20 +250,20 @@ function batalBeliObat() {
     faktur = faktur.slice(0, lastObatIndex);
 
     // Update total purchase amount
-    let totalPurchaseAmount = 0;
+    let totalPurchaseAmount1 = 0;
     let fakturLines = faktur.split("\n");
     for (let i = 0; i < fakturLines.length; i++) {
       let line = fakturLines[i].trim();
       if (line !== "") {
         let quantity = parseInt(line.split(" ")[1]);
         let obat = extractMedicineName(line);
-        totalPurchaseAmount += quantity * harga[obat];
+        totalPurchaseAmount1 += quantity * harga[obat];
       }
     }
 
     document.getElementById("faktur").textContent = "```\n" + faktur + "```";
-    document.getElementById("totalAmountValue").textContent =
-      totalPurchaseAmount.toLocaleString();
+    // document.getElementById("totalAmountValue").textContent =
+    //   totalPurchaseAmount.toLocaleString();
 
     // Perbarui jumlah stok pada tabel
     let stockOpnameTable = document.getElementById("stockOpnameTable");
@@ -286,6 +286,7 @@ function batalBeliObat() {
         clearFaktur();
       }
     }
+    totalPurchaseAmount = totalPurchaseAmount1;
     showToast("Berhasil membatalkan!", "info");
     sessionStorage.setItem("stok", JSON.stringify(stok));
   } else {
@@ -299,20 +300,20 @@ function beliObat(obat) {
     faktur += "- 1 " + obat + " (" + stok[obat] + ")\n";
 
     // Update total purchase amount
-    let totalPurchaseAmount = 0;
+    let totalPurchaseAmount1 = 0;
     let fakturLines = faktur.split("\n");
     for (let i = 0; i < fakturLines.length; i++) {
       let line = fakturLines[i].trim();
       if (line !== "") {
         let quantity = parseInt(line.split(" ")[1]);
         let obat = extractMedicineName(line);
-        totalPurchaseAmount += quantity * harga[obat];
+        totalPurchaseAmount1 += quantity * harga[obat];
       }
     }
 
     document.getElementById("faktur").textContent = "```\n" + faktur + "```";
-    document.getElementById("totalAmountValue").textContent =
-      totalPurchaseAmount.toLocaleString();
+    // document.getElementById("totalAmountValue").textContent =
+    //   totalPurchaseAmount.toLocaleString();
 
     // Perbarui jumlah stok pada tabel
     let stockOpnameTable = document.getElementById("stockOpnameTable");
@@ -331,6 +332,7 @@ function beliObat(obat) {
     }
     sessionStorage.setItem("stok", JSON.stringify(stok));
     showToast("Sukses membeli obat " + obat, "success");
+    totalPurchaseAmount = totalPurchaseAmount1;
   } else {
     showToast("Stock Obat " + obat + " habis!", "danger");
     // let alertDiv = document.createElement("div");
@@ -341,7 +343,13 @@ function beliObat(obat) {
     // hideAlert(alertDiv);
   }
 }
-
+function clearFaktur() {
+  faktur = "";
+  document.getElementById("faktur").textContent = "";
+  document.getElementById("totalAmountValue").textContent =
+    totalPurchaseAmount.toLocaleString(); // Perbarui tampilan total harga
+  showToast("Berhasil menghapus nota!", "success");
+}
 function copyFaktur() {
   let fakturText = "```\n" + faktur + "```";
   navigator.clipboard
@@ -354,9 +362,8 @@ function copyFaktur() {
     });
 }
 
-function clearFaktur() {
-  faktur = "";
-  totalPurchaseAmount = 0; // Reset totalPurchaseAmount ke 0
+function refreshHarga() {
+  totalPurchaseAmount = 0;
   document.getElementById("faktur").textContent = "";
   document.getElementById("totalAmountValue").textContent =
     totalPurchaseAmount.toLocaleString(); // Perbarui tampilan total harga
