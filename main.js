@@ -113,7 +113,15 @@ function startProgressBar() {
   }
 }
 
+function removeToast() {
+    let toastElement = document.getElementById("toastPlacement");
+    if (toastElement) {
+      toastElement.remove();
+    }
+  }
+
 function showToast(message, type) {
+    
   let previousToast = document.querySelector(".toast");
   if (previousToast) {
     previousToast.remove();
@@ -209,12 +217,11 @@ function showToast(message, type) {
 
   let width = 0;
   let progressInterval = setInterval(frame, 80); // Sesuaikan dengan kecepatan animasi yang diinginkan
-
+  bootstrapToast._element.addEventListener("hidden.bs.toast", removeToast);
   function frame() {
     if (width >= 100) {
       clearInterval(progressInterval);
       bootstrapToast.hide();
-      toast.remove();
     } else {
       width++;
       progressBar.style.width = width + "%";
